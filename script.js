@@ -95,7 +95,7 @@ function startPage() {
         let emailInput = document.getElementById("email").value;
         let passwordInput = document.getElementById("passW").value;
 
-        fetch("http://localhost:3000/users")
+        fetch("https://headless-login-page.herokuapp.com/users")
         .then(res => res.json())
         .then(data => {
             let savedUsers = data;            
@@ -123,7 +123,7 @@ function loggedIn() {
 
     // FETCH LIST WITH ALL USERS
 
-    fetch("http://localhost:3000/users")
+    fetch("https://headless-login-page.herokuapp.com/users")
     .then(res => res.json())
     .then(data => {
         let savedUsers = data;
