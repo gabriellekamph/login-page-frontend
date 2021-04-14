@@ -67,7 +67,7 @@ function startPage() {
         
             // console.log(newUser);
         
-            fetch("http://localhost:3000/users/new", {
+            fetch("https://headless-login-page.herokuapp.com/users/new", {
                 method: "post",
                 headers: {
                     "Content-Type": "application/json",
