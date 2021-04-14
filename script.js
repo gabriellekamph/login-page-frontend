@@ -16,28 +16,65 @@ function checkLocalStorage() {
 
 function startPage() {
 
-    document.getElementById("topnav").innerHTML = `<nav id="loginform"><label for="email">Email:</label>
-                                                    <input id="email" type="text" name="email"><br />
-
-                                                    <label for="passW">Password:</label>
-                                                    <input id="passW" type="password" name="passW" required> <br />
-
-                                                    <button id="loginBtn" type="submit">Login</button></>`
-    
     document.getElementById("content").innerHTML = `<h2>Hello! &#128075;</h2> <p>Welcome to this super basic but awesome login page. <br /> Sign in with your email and password.  <br /><br />
     No account? Let's create one! <br /><br />
     <button id="registerBtn" type="submit">Register here</button></></p>`
+    logIn();
 
-    // PRESS ENTER KEY TO LOGIN
+    function logIn() {
 
-    let passW = document.getElementById("passW");
-    passW.addEventListener("keyup", function(event) {
-    if (event.keyCode === 13) {
+        document.getElementById("topnav").innerHTML = `<nav id="loginform"><label for="email">Email:</label>
+        <input id="email" type="text" name="email"><br />
+
+        <label for="passW">Password:</label>
+        <input id="passW" type="password" name="passW" required> <br />
+
+        <button id="loginBtn" type="submit">Login</button></>`
+
+        document.getElementById("loginBtn").addEventListener("click", validateInput);
+
+        // PRESS ENTER KEY TO LOGIN
+
+        let passW = document.getElementById("passW");
+        passW.addEventListener("keyup", function(event) {
+        if (event.keyCode === 13) {
         event.preventDefault();
         document.getElementById("loginBtn").click();
         validateInput();
+        }
+        });
+
     }
-    });
+
+    // VALIDATE USERNAME AND PASSWORD 
+    
+    document.getElementById("loginBtn").addEventListener("click", validateInput);
+
+    function validateInput() {
+
+        let emailInput = document.getElementById("email").value;
+        let passwordInput = document.getElementById("passW").value;
+
+        fetch("https://headless-login-page.herokuapp.com/users")
+        .then(res => res.json())
+        .then(data => {
+            let savedUsers = data;            
+
+            for (let i=0; i < savedUsers.length; i++) {
+                if (emailInput == savedUsers[i].email && passwordInput == savedUsers[i].passW) {
+                    console.log("Login successful for user with id: " + savedUsers[i].id);
+                    localStorage.setItem("userId", savedUsers[i].id);    
+                    loggedIn();
+                    return;
+                } 
+            }
+
+            // ERROR MESSAGE IF LOGIN FAILED
+            
+            document.getElementById("content").innerHTML = "<h2>Oops! &#129327;</h2> <p>Wrong email and/or password. Try again! </p>";
+            console.log("Wrong email and/or password.");
+        })
+    }
 
     // REGISTER A NEW USER
 
@@ -77,43 +114,9 @@ function startPage() {
             .then(res => res.json())
             .then(data => console.log(data));
 
-            document.getElementById("topnav").innerHTML = `<nav id="loginform"><label for="email">Email:</label>
-                                                            <input id="email" type="text" name="email"><br />
-                                                            <label for="passW">Password:</label>
-                                                            <input id="passW" type="password" name="passW" required> <br />
-                                                            <button id="loginBtn" type="submit">Login</button></>`
-            document.getElementById("content").innerHTML = `<h1>&#128079;</h1><h3>Well done!</h3><p>A new account is created. You can now log in!</p>`
+            document.getElementById("content").innerHTML = `<h1>&#128079;</h1><h3>Well done!</h3><p>A new account is created. You can now log in! </p>`
+            logIn();
         });
-    }
-
-    // VALIDATE USERNAME AND PASSWORD 
-    
-    document.getElementById("loginBtn").addEventListener("click", validateInput);
-
-    function validateInput() {
-
-        let emailInput = document.getElementById("email").value;
-        let passwordInput = document.getElementById("passW").value;
-
-        fetch("https://headless-login-page.herokuapp.com/users")
-        .then(res => res.json())
-        .then(data => {
-            let savedUsers = data;            
-
-            for (let i=0; i < savedUsers.length; i++) {
-                if (emailInput == savedUsers[i].email && passwordInput == savedUsers[i].passW) {
-                    console.log("Login successful for user with id: " + savedUsers[i].id);
-                    localStorage.setItem("userId", savedUsers[i].id);    
-                    loggedIn();
-                    return;
-                } 
-            }
-
-            // ERROR MESSAGE IF LOGIN FAILED
-            
-            document.getElementById("content").innerHTML = "<h2>Oops! &#129327;</h2> <p>Wrong email and/or password. Try again! </p>";
-            console.log("Wrong email and/or password.");
-        })
     }
 }
 
